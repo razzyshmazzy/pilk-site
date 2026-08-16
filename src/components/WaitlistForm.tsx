@@ -120,7 +120,7 @@ export function WaitlistForm() {
   if (status === "success") {
     return (
       <div
-        className="rounded-3xl border border-pilk-200 bg-pilk-50 p-8 text-center animate-pop-in sm:p-10"
+        className="rounded-3xl border border-pilk-500/30 bg-cream-50 p-8 text-center animate-pop-in sm:p-10"
         role="status"
         aria-live="polite"
       >
@@ -161,7 +161,7 @@ export function WaitlistForm() {
       <div className="grid gap-4">
         <div>
           <label htmlFor="email" className="mb-1.5 block text-sm font-semibold text-ink">
-            Email <span className="text-pilk-700">*</span>
+            Email <span className="text-pilk-400">*</span>
           </label>
           <input
             id="email"
@@ -176,9 +176,9 @@ export function WaitlistForm() {
             onBlur={() => setTouched(true)}
             aria-invalid={showEmailError}
             aria-describedby={showEmailError ? "email-error" : undefined}
-            className="w-full rounded-xl border border-ink/15 bg-white px-4 py-3 text-ink
-              placeholder:text-ink-400 focus-visible:border-pilk-600
-              focus-visible:ring-2 focus-visible:ring-pilk-600/40"
+            className="w-full rounded-xl border border-ink/15 bg-cream px-4 py-3 text-ink
+              placeholder:text-ink-400 focus-visible:border-pilk-500
+              focus-visible:ring-2 focus-visible:ring-pilk-500/40"
           />
           {showEmailError && (
             <p id="email-error" className="mt-1.5 text-sm font-medium text-melon-500">
@@ -200,7 +200,7 @@ export function WaitlistForm() {
               placeholder="Alex"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
-              className="w-full rounded-xl border border-ink/15 bg-white px-4 py-3 text-ink
+              className="w-full rounded-xl border border-ink/15 bg-cream px-4 py-3 text-ink
                 placeholder:text-ink-400 focus-visible:border-pilk-600
                 focus-visible:ring-2 focus-visible:ring-pilk-600/40"
             />
@@ -217,7 +217,7 @@ export function WaitlistForm() {
               placeholder="Where you're at"
               value={organization}
               onChange={(e) => setOrganization(e.target.value)}
-              className="w-full rounded-xl border border-ink/15 bg-white px-4 py-3 text-ink
+              className="w-full rounded-xl border border-ink/15 bg-cream px-4 py-3 text-ink
                 placeholder:text-ink-400 focus-visible:border-pilk-600
                 focus-visible:ring-2 focus-visible:ring-pilk-600/40"
             />
@@ -234,8 +234,8 @@ export function WaitlistForm() {
             name="useCase"
             value={useCase}
             onChange={(e) => setUseCase(e.target.value)}
-            className="w-full rounded-xl border border-ink/15 bg-white px-4 py-3 text-ink
-              focus-visible:border-pilk-600 focus-visible:ring-2 focus-visible:ring-pilk-600/40"
+            className="w-full rounded-xl border border-ink/15 bg-cream px-4 py-3 text-ink
+              focus-visible:border-pilk-500 focus-visible:ring-2 focus-visible:ring-pilk-500/40"
           >
             <option value="">Pick one…</option>
             {USE_CASES.map((c) => (

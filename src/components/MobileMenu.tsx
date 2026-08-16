@@ -63,7 +63,7 @@ export function MobileMenu() {
             type="button"
             aria-label="Close menu"
             onClick={close}
-            className="absolute inset-0 h-full w-full cursor-default bg-ink/40 animate-fade-in"
+            className="absolute inset-0 h-full w-full cursor-default bg-black/60 animate-fade-in"
             tabIndex={-1}
           />
           <div

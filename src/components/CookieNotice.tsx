@@ -40,11 +40,11 @@ export function CookieNotice() {
       aria-label="Cookie notice"
     >
       <div className="container-page">
-        <div className="flex flex-col gap-3 rounded-2xl border border-ink/10 bg-white p-4 shadow-lift sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-6">
+        <div className="flex flex-col gap-3 rounded-2xl border border-ink/10 bg-cream-50 p-4 shadow-lift sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-6">
           <p className="text-sm text-ink-700">
             Pilk uses only the essential storage needed to run this site — no
             advertising trackers. See our{" "}
-            <Link href="/cookies" className="font-semibold text-pilk-700 underline underline-offset-2">
+            <Link href="/cookies" className="font-semibold text-pilk-400 underline underline-offset-2">
               Cookie Policy
             </Link>{" "}
             for details.

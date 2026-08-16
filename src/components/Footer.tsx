@@ -16,7 +16,7 @@ export function Footer() {
               A faster way for groups to split the restaurant check. Scan in,
               pick your share, and skip the post-dinner Venmo chase.
             </p>
-            <p className="mt-4 text-sm font-semibold text-pilk-700">
+            <p className="mt-4 text-sm font-semibold text-pilk-400">
               Split the check. Not the friendship.
             </p>
           </div>
@@ -30,7 +30,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-ink-700 transition-colors hover:text-pilk-700"
+                    className="text-ink-700 transition-colors hover:text-pilk-400"
                   >
                     {link.label}
                   </Link>
@@ -48,7 +48,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-ink-700 transition-colors hover:text-pilk-700"
+                    className="text-ink-700 transition-colors hover:text-pilk-400"
                   >
                     {link.label}
                   </Link>
@@ -57,7 +57,7 @@ export function Footer() {
               <li>
                 <a
                   href={`mailto:${siteConfig.supportEmail}`}
-                  className="text-ink-700 transition-colors hover:text-pilk-700"
+                  className="text-ink-700 transition-colors hover:text-pilk-400"
                 >
                   {siteConfig.supportEmail}
                 </a>

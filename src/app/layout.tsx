@@ -20,8 +20,8 @@ const sora = Sora({
 });
 
 export const viewport: Viewport = {
-  themeColor: "#FBF7EF",
-  colorScheme: "light",
+  themeColor: "#101012",
+  colorScheme: "dark",
 };
 
 export const metadata: Metadata = {
@@ -89,7 +89,7 @@ export default function RootLayout({
         {/* Skip link for keyboard and screen-reader users. */}
         <a
           href="#main"
-          className="sr-only rounded-lg bg-ink px-4 py-2 text-cream-50 focus:not-sr-only
+          className="sr-only rounded-lg bg-pilk-600 px-4 py-2 text-white focus:not-sr-only
             focus:absolute focus:left-4 focus:top-4 focus:z-50"
         >
           Skip to content

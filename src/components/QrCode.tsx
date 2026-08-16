@@ -33,7 +33,7 @@ export function QrCode({ className = "" }: { className?: string }) {
       aria-label="QR code to join the table"
       shapeRendering="crispEdges"
     >
-      <rect width={dim} height={dim} rx="10" className="fill-white" />
+      <rect width={dim} height={dim} rx="10" className="fill-cream-200" />
       {PATTERN.flatMap((row, y) =>
         row.split("").map((v, x) =>
           v === "1" ? (

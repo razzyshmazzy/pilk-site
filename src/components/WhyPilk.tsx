@@ -32,16 +32,16 @@ const reasons: Reason[] = [
 
 export function WhyPilk() {
   return (
-    <section id="why-pilk" className="scroll-mt-24 bg-ink py-20 text-cream-50 sm:py-28">
+    <section id="why-pilk" className="scroll-mt-24 bg-cream-50 py-20 text-ink sm:py-28">
       <div className="container-page">
         <div className="max-w-2xl">
-          <p className="text-sm font-semibold uppercase tracking-[0.14em] text-pilk-300">
+          <p className="text-sm font-semibold uppercase tracking-[0.14em] text-pilk-400">
             Why Pilk
           </p>
           <h2 className="mt-3 font-display text-3xl font-extrabold tracking-tight text-balance sm:text-4xl">
             Dinner was fun. The spreadsheet afterward wasn&apos;t.
           </h2>
-          <p className="mt-4 text-lg text-cream/70 text-pretty">
+          <p className="mt-4 text-lg text-ink-600 text-pretty">
             Splitting a check is something people do constantly, and somehow it&apos;s
             still awkward. Pilk fixes the part everyone dreads.
           </p>
@@ -51,16 +51,16 @@ export function WhyPilk() {
           {reasons.map(({ title, body, Icon }) => (
             <div
               key={title}
-              className="flex gap-4 rounded-3xl border border-white/10 bg-white/[0.03] p-6"
+              className="flex gap-4 rounded-3xl border border-ink/10 bg-cream-200 p-6"
             >
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-pilk-500/15 text-pilk-300">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-pilk-500/15 text-pilk-400">
                 <Icon className="h-5 w-5" />
               </span>
               <div>
-                <h3 className="font-display text-lg font-bold text-cream-50">
+                <h3 className="font-display text-lg font-bold text-ink">
                   {title}
                 </h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-cream/60">
+                <p className="mt-1.5 text-sm leading-relaxed text-ink-600">
                   {body}
                 </p>
               </div>

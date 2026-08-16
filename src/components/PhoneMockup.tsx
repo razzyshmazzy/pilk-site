@@ -17,7 +17,7 @@ interface Diner {
 
 const diners: Diner[] = [
   { name: "Maya", amount: "$28.40", tone: "bg-pilk-500", status: "paid" },
-  { name: "You", amount: "$24.50", tone: "bg-ink", status: "you" },
+  { name: "You", amount: "$24.50", tone: "bg-cream-200", status: "you" },
   { name: "Devin", amount: "$31.10", tone: "bg-melon-500", status: "paid" },
   { name: "Priya", amount: "$19.75", tone: "bg-butter-500", status: "pending" },
 ];
@@ -36,7 +36,7 @@ export function PhoneMockup() {
   return (
     <div aria-hidden className="relative mx-auto w-[300px] select-none sm:w-[340px]">
       {/* Phone frame */}
-      <div className="relative rounded-[2.75rem] border-[6px] border-ink bg-ink p-2 shadow-phone">
+      <div className="relative rounded-[2.75rem] border-[6px] border-black bg-black p-2 shadow-phone">
         {/* Screen */}
         <div className="relative overflow-hidden rounded-[2.25rem] bg-cream-50">
           {/* Status bar */}
@@ -61,12 +61,12 @@ export function PhoneMockup() {
           </div>
 
           {/* Your amount card */}
-          <div className="mx-5 mt-3 rounded-2xl bg-ink p-4 text-cream-50">
-            <p className="text-xs font-medium text-cream/70">You owe</p>
+          <div className="mx-5 mt-3 rounded-2xl bg-pilk-600 p-4 text-white">
+            <p className="text-xs font-medium text-white/70">You owe</p>
             <p className="font-display text-3xl font-extrabold tracking-tight">
               $24.50
             </p>
-            <p className="mt-0.5 text-[11px] text-cream/60">
+            <p className="mt-0.5 text-[11px] text-white/70">
               Includes tax &amp; 18% tip
             </p>
           </div>
@@ -112,7 +112,7 @@ export function PhoneMockup() {
       </div>
 
       {/* Floating QR "join" card */}
-      <div className="absolute -left-8 top-24 hidden rotate-[-6deg] animate-fade-up rounded-2xl bg-white p-3 shadow-lift sm:block">
+      <div className="absolute -left-8 top-24 hidden rotate-[-6deg] animate-fade-up rounded-2xl bg-cream-50 p-3 shadow-lift ring-1 ring-ink/10 sm:block">
         <QrCode className="h-24 w-24" />
         <p className="mt-1.5 text-center text-[10px] font-semibold text-ink-600">
           Scan to join
@@ -120,7 +120,7 @@ export function PhoneMockup() {
       </div>
 
       {/* Floating "settled" chip */}
-      <div className="absolute -right-4 bottom-16 flex items-center gap-2 rounded-full bg-white px-3 py-2 shadow-lift">
+      <div className="absolute -right-4 bottom-16 flex items-center gap-2 rounded-full bg-cream-50 px-3 py-2 shadow-lift ring-1 ring-ink/10">
         <span className="flex h-6 w-6 items-center justify-center rounded-full bg-pilk-500 text-white">
           <CheckIcon className="h-3.5 w-3.5" strokeWidth={3} />
         </span>

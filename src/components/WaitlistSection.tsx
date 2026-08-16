@@ -11,7 +11,7 @@ export function WaitlistSection() {
   return (
     <section id="waitlist" className="scroll-mt-24 py-20 sm:py-28">
       <div className="container-page">
-        <div className="overflow-hidden rounded-[2.5rem] border border-ink/10 bg-white shadow-soft">
+        <div className="overflow-hidden rounded-[2.5rem] border border-ink/10 bg-cream-50 shadow-soft">
           <div className="grid gap-10 p-8 sm:p-12 lg:grid-cols-2 lg:gap-16">
             <div className="flex flex-col justify-center">
               <p className="eyebrow">Get early access</p>

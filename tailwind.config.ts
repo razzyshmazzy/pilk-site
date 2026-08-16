@@ -9,34 +9,37 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Warm off-white canvas — feels friendly, not clinical.
+        // Dark canvas. `cream` is the surface family: DEFAULT is the page
+        // background (near-black), higher shades are progressively lighter
+        // raised surfaces (cards, hovers).
         cream: {
-          DEFAULT: "#FBF7EF",
-          50: "#FEFDFB",
-          100: "#FBF7EF",
-          200: "#F4ECDD",
+          DEFAULT: "#101012",
+          50: "#191A1D",
+          100: "#101012",
+          200: "#24252A",
         },
-        // Near-black with a touch of warmth for text and dark surfaces.
+        // Light "ink" — the content family. DEFAULT is primary text (near-white);
+        // higher numbers are progressively more muted greys / hairline borders.
         ink: {
-          DEFAULT: "#17150F",
-          800: "#26231A",
-          700: "#3A362A",
-          600: "#57513F",
-          500: "#756E58",
-          400: "#9A927A",
+          DEFAULT: "#F6F2EA",
+          800: "#E7E2D6",
+          700: "#D3CDBF",
+          600: "#B7B0A0",
+          500: "#948C7C",
+          400: "#6F6858",
         },
-        // Pilk's signature green — fresh, appetizing, trustworthy.
+        // Pilk's signature colour — a warm, vivid orange.
         pilk: {
-          50: "#E9FBF2",
-          100: "#CBF5E0",
-          200: "#98EBC3",
-          300: "#5CDCA1",
-          400: "#2AC582",
-          500: "#12B27A",
-          600: "#0B8F63",
-          700: "#0C7150",
-          800: "#0E5A42",
-          900: "#0C4635",
+          50: "#FFF3E9",
+          100: "#FFE2CC",
+          200: "#FFC59B",
+          300: "#FFA366",
+          400: "#FF8636",
+          500: "#F76B15",
+          600: "#E35D0C",
+          700: "#BC4A0B",
+          800: "#953C0F",
+          900: "#7A3310",
         },
         // Warm accent used sparingly inside product mockups (receipts, chips).
         melon: {

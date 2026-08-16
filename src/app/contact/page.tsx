@@ -31,7 +31,7 @@ export default function ContactPage() {
               <p className="text-sm font-medium text-ink-500">Email us</p>
               <a
                 href={`mailto:${siteConfig.supportEmail}`}
-                className="font-display text-xl font-bold text-ink hover:text-pilk-700"
+                className="font-display text-xl font-bold text-ink hover:text-pilk-400"
               >
                 {siteConfig.supportEmail}
               </a>
@@ -43,11 +43,11 @@ export default function ContactPage() {
           </p>
         </div>
 
-        <div className="mt-8 rounded-3xl bg-ink p-8 text-cream-50">
+        <div className="mt-8 rounded-3xl border border-ink/10 bg-cream-50 p-8 text-ink">
           <h2 className="font-display text-xl font-bold">
             Looking for early access?
           </h2>
-          <p className="mt-2 text-cream/70">
+          <p className="mt-2 text-ink-600">
             The fastest way to hear about Pilk is the waitlist.
           </p>
           <Link href="/#waitlist" className="btn-primary mt-5">

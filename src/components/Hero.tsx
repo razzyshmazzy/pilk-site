@@ -9,7 +9,7 @@ export function Hero() {
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-[560px]
-          bg-[radial-gradient(60%_60%_at_70%_10%,rgba(18,178,122,0.10),transparent_70%)]"
+          bg-[radial-gradient(60%_60%_at_70%_10%,rgba(247,107,21,0.14),transparent_70%)]"
       />
 
       <div className="container-page relative grid gap-12 pb-16 pt-14 sm:pt-20 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-8 lg:pb-24">
@@ -44,7 +44,7 @@ export function Hero() {
           <div className="mt-9 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-semibold text-ink-600">
             {["Scan.", "Split.", "Pay.", "Done."].map((word, i) => (
               <span key={word} className="flex items-center gap-2">
-                <span className={i === 3 ? "text-pilk-700" : "text-ink"}>
+                <span className={i === 3 ? "text-pilk-400" : "text-ink"}>
                   {word}
                 </span>
                 {i < 3 && <span aria-hidden className="text-ink-400">•</span>}

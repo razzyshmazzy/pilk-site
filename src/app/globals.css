@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    color-scheme: light;
+    color-scheme: dark;
   }
 
   html {
@@ -29,7 +29,7 @@
   }
 
   ::selection {
-    background-color: rgba(18, 178, 122, 0.22);
+    background-color: rgba(247, 107, 21, 0.28);
   }
 }
 
@@ -53,7 +53,7 @@
 
   .btn-secondary {
     @apply btn border border-ink/15 bg-cream-50 text-ink
-      hover:border-ink/30 hover:bg-white active:translate-y-px
+      hover:border-ink/30 hover:bg-cream-200 active:translate-y-px
       focus-visible:ring-ink focus-visible:ring-offset-cream;
   }
 
@@ -63,7 +63,7 @@
 
   /* Small uppercase label used above section headings. */
   .eyebrow {
-    @apply text-sm font-semibold uppercase tracking-[0.14em] text-pilk-700;
+    @apply text-sm font-semibold uppercase tracking-[0.14em] text-pilk-400;
   }
 
   /* Readable typography for long-form legal documents. */
@@ -80,13 +80,13 @@
     @apply mt-4;
   }
   .legal-prose ul {
-    @apply mt-4 list-disc space-y-2 pl-6 marker:text-pilk-600;
+    @apply mt-4 list-disc space-y-2 pl-6 marker:text-pilk-500;
   }
   .legal-prose li {
     @apply pl-1;
   }
   .legal-prose a {
-    @apply font-medium text-pilk-700 underline underline-offset-2 hover:text-pilk-800;
+    @apply font-medium text-pilk-400 underline underline-offset-2 hover:text-pilk-300;
   }
   .legal-prose strong {
     @apply font-semibold text-ink;
