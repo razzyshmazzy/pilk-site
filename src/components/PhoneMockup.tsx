@@ -111,13 +111,20 @@ export function PhoneMockup() {
         </div>
       </div>
 
-      {/* Floating QR "join" card */}
-      <div className="absolute -left-8 top-24 hidden rotate-[-6deg] animate-fade-up rounded-2xl bg-cream-50 p-3 shadow-lift ring-1 ring-ink/10 sm:block">
+      {/* Floating QR "join" card. Links to razzyshmazzy.com for now; later this
+          will point at the app-store download and only show on mobile.
+          tabIndex -1 keeps it out of the tab order since the mockup is
+          decorative (aria-hidden). */}
+      <a
+        href="https://razzyshmazzy.com"
+        tabIndex={-1}
+        className="group absolute -right-8 top-24 hidden rotate-[6deg] animate-fade-up rounded-2xl bg-cream-50 p-3 shadow-lift ring-1 ring-ink/10 transition-transform duration-200 hover:rotate-0 hover:shadow-phone sm:block"
+      >
         <QrCode className="h-24 w-24" />
         <p className="mt-1.5 text-center text-[10px] font-semibold text-ink-600">
           Scan to join
         </p>
-      </div>
+      </a>
 
       {/* Floating "settled" chip */}
       <div className="absolute -right-4 bottom-16 flex items-center gap-2 rounded-full bg-cream-50 px-3 py-2 shadow-lift ring-1 ring-ink/10">

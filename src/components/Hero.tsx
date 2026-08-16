@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { PhoneMockup } from "./PhoneMockup";
-import { ArrowRightIcon, BoltIcon } from "./icons";
+import { ArrowRightIcon } from "./icons";
 
 export function Hero() {
   return (
@@ -15,12 +15,7 @@ export function Hero() {
       <div className="container-page relative grid gap-12 pb-16 pt-14 sm:pt-20 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-8 lg:pb-24">
         {/* Left: copy */}
         <div className="animate-fade-up">
-          <span className="inline-flex items-center gap-2 rounded-full border border-pilk-200 bg-pilk-50 px-3 py-1 text-sm font-semibold text-pilk-800">
-            <BoltIcon className="h-4 w-4" />
-            Pilk is coming soon — get early access
-          </span>
-
-          <h1 className="mt-5 font-display text-[2.6rem] font-extrabold leading-[1.04] tracking-tight text-ink text-balance sm:text-6xl">
+          <h1 className="font-display text-[2.6rem] font-extrabold leading-[1.04] tracking-tight text-ink text-balance sm:text-6xl">
             Split the check without doing the math.
           </h1>
 
