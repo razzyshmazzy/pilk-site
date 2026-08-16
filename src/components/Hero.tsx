@@ -8,8 +8,8 @@ export function Hero() {
       {/* Soft, contained background wash — no floating blobs. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-[560px]
-          bg-[radial-gradient(60%_60%_at_70%_10%,rgba(247,107,21,0.14),transparent_70%)]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[620px]
+          bg-[radial-gradient(55%_55%_at_72%_8%,rgba(247,107,21,0.16),transparent_70%),radial-gradient(45%_50%_at_12%_88%,rgba(20,184,166,0.10),transparent_70%)]"
       />
 
       <div className="container-page relative grid gap-12 pb-16 pt-14 sm:pt-20 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-8 lg:pb-24">

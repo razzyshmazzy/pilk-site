@@ -120,11 +120,11 @@ export function WaitlistForm() {
   if (status === "success") {
     return (
       <div
-        className="rounded-3xl border border-pilk-500/30 bg-cream-50 p-8 text-center animate-pop-in sm:p-10"
+        className="rounded-3xl border border-teal-500/30 bg-cream-50 p-8 text-center animate-pop-in sm:p-10"
         role="status"
         aria-live="polite"
       >
-        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-pilk-600 text-white">
+        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-teal-500 text-white">
           <CheckCircleIcon className="h-7 w-7" />
         </span>
         <h3 className="mt-5 font-display text-2xl font-extrabold text-ink">
@@ -181,7 +181,7 @@ export function WaitlistForm() {
               focus-visible:ring-2 focus-visible:ring-pilk-500/40"
           />
           {showEmailError && (
-            <p id="email-error" className="mt-1.5 text-sm font-medium text-melon-500">
+            <p id="email-error" className="mt-1.5 text-sm font-medium text-red-400">
               That email doesn&apos;t look quite right.
             </p>
           )}
@@ -247,7 +247,7 @@ export function WaitlistForm() {
         </div>
 
         {status === "error" && error && (
-          <p role="alert" className="text-sm font-medium text-melon-500">
+          <p role="alert" className="text-sm font-medium text-red-400">
             {error}
           </p>
         )}

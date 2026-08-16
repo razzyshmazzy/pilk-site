@@ -18,7 +18,7 @@ interface Diner {
 const diners: Diner[] = [
   { name: "Maya", amount: "$28.40", tone: "bg-pilk-500", status: "paid" },
   { name: "You", amount: "$24.50", tone: "bg-cream-200", status: "you" },
-  { name: "Devin", amount: "$31.10", tone: "bg-melon-500", status: "paid" },
+  { name: "Devin", amount: "$31.10", tone: "bg-teal-500", status: "paid" },
   { name: "Priya", amount: "$19.75", tone: "bg-butter-500", status: "pending" },
 ];
 
@@ -88,7 +88,7 @@ export function PhoneMockup() {
                   {d.amount}
                 </span>
                 {d.status === "paid" ? (
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-pilk-500 text-white">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-teal-500 text-white">
                     <CheckIcon className="h-3 w-3" strokeWidth={3} />
                   </span>
                 ) : (
@@ -128,7 +128,7 @@ export function PhoneMockup() {
 
       {/* Floating "settled" chip */}
       <div className="absolute -right-4 bottom-16 flex items-center gap-2 rounded-full bg-cream-50 px-3 py-2 shadow-lift ring-1 ring-ink/10">
-        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-pilk-500 text-white">
+        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-teal-500 text-white">
           <CheckIcon className="h-3.5 w-3.5" strokeWidth={3} />
         </span>
         <span className="pr-1 text-xs font-bold text-ink">Settled up</span>

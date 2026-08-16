@@ -41,11 +41,18 @@ const config: Config = {
           800: "#953C0F",
           900: "#7A3310",
         },
-        // Warm accent used sparingly inside product mockups (receipts, chips).
-        melon: {
-          400: "#FF8A6B",
-          500: "#FF6F4D",
+        // Teal — orange's complement. Used as the cool secondary accent for
+        // "done / settled / positive" states, balancing the warm orange
+        // (60-30-10: dark neutral / orange / teal).
+        teal: {
+          200: "#99F6E4",
+          300: "#5EEAD4",
+          400: "#2DD4BF",
+          500: "#14B8A6",
+          600: "#0D9488",
+          700: "#0F766E",
         },
+        // Warm amber, analogous to orange — one soft accent inside the mockup.
         butter: {
           400: "#FFD466",
           500: "#F7C13B",

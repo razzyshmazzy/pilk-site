@@ -25,7 +25,7 @@ export function WaitlistSection() {
               <ul className="mt-6 space-y-3">
                 {perks.map((perk) => (
                   <li key={perk} className="flex items-start gap-3 text-ink-700">
-                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-pilk-100 text-pilk-700">
+                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-teal-500/15 text-teal-300">
                       <CheckIcon className="h-3.5 w-3.5" strokeWidth={3} />
                     </span>
                     <span className="text-[15px]">{perk}</span>
