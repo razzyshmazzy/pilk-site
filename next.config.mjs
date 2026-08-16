@@ -1,10 +1,11 @@
 /** @type {import('next').NextConfig} */
 
 // GitHub Pages serves static files only, so the site is built as a static
-// export. When hosted at https://<user>.github.io/<repo>, all routes live under
-// a "/<repo>" base path. Both are configurable via env so the same code can
-// deploy to a custom domain (set NEXT_PUBLIC_BASE_PATH="") without edits.
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "/pilk-site";
+// export. The site is deployed to the custom domain https://gotpilk.com, which
+// serves at the root — so the base path is empty by default. To host at a
+// project-page path instead (https://<user>.github.io/<repo>), set
+// NEXT_PUBLIC_BASE_PATH="/<repo>". The deploy workflow sets this automatically.
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 const nextConfig = {
   output: "export",

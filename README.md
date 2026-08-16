@@ -56,14 +56,15 @@ CI these are set by the deploy workflow and repo variables (see [Deployment](#de
 
 | Variable                   | Required | Purpose                                                                                  |
 | -------------------------- | -------- | ---------------------------------------------------------------------------------------- |
-| `NEXT_PUBLIC_SITE_URL`     | Prod     | Deployment **origin** (no path), e.g. `https://you.github.io`. Used for absolute URLs.    |
-| `NEXT_PUBLIC_BASE_PATH`    | Prod     | Base path the site is served under, e.g. `/pilk-site`. Empty (`""`) for a custom domain.  |
+| `NEXT_PUBLIC_SITE_URL`     | Prod     | Deployment **origin** (no path), e.g. `https://gotpilk.com`. Used for absolute URLs.      |
+| `NEXT_PUBLIC_BASE_PATH`    | Prod     | Base path the site is served under. Empty (`""`) for the custom domain; `/<repo>` for a project page. |
 | `NEXT_PUBLIC_FORMSPREE_ID` | No       | Formspree form id to enable real waitlist submissions. Blank → email fallback.            |
-| `NEXT_PUBLIC_BRAND_DOMAIN` | No       | Brand domain for contact emails (e.g. `pilk.com`). Independent of the hosting URL.        |
+| `NEXT_PUBLIC_BRAND_DOMAIN` | No       | Brand domain for contact emails (e.g. `gotpilk.com`). Independent of the hosting URL.     |
 | `NEXT_PUBLIC_ANALYTICS_*`  | No       | Reserved for a privacy-conscious analytics provider (not wired by default).              |
 
 `NEXT_PUBLIC_BASE_PATH` must match `basePath` in `next.config.mjs` — both read
-the same variable, defaulting to `/pilk-site`.
+the same variable, defaulting to `""` (root). The deploy workflow sets it
+automatically: empty when `public/CNAME` exists, `/<repo>` otherwise.
 
 **Never commit real secrets.** `.env` and `.env*.local` are gitignored.
 
@@ -158,26 +159,28 @@ src/
 ## Deployment
 
 The site deploys to **GitHub Pages** via GitHub Actions
-(`.github/workflows/deploy.yml`) on every push to `main`.
+(`.github/workflows/deploy.yml`) on every push to `main`. It is served at the
+custom domain **https://gotpilk.com** (configured via `public/CNAME`).
 
 **One-time setup:**
 
 1. In the repo: **Settings → Pages → Build and deployment → Source = GitHub
    Actions**.
-2. (Optional but recommended) Add a repo **variable**
-   `NEXT_PUBLIC_FORMSPREE_ID` (**Settings → Secrets and variables → Actions →
-   Variables**) so the waitlist form submits real signups. See
-   [Waitlist](#waitlist).
-3. Push to `main`. The workflow builds the static export and publishes it. The
-   site goes live at `https://<your-username>.github.io/<repo>/`.
+2. Confirm the custom domain under **Settings → Pages → Custom domain** is
+   `gotpilk.com` and that DNS points at GitHub Pages
+   (`CNAME`/`ALIAS` to `<user>.github.io`, or the four Pages `A` records).
+3. (Recommended) Add a repo **variable** `NEXT_PUBLIC_FORMSPREE_ID`
+   (**Settings → Secrets and variables → Actions → Variables**) so the waitlist
+   form submits real signups. See [Waitlist](#waitlist).
+4. Push to `main`. The workflow builds the static export and publishes it.
 
-The workflow derives the URL automatically from the repo
-(`NEXT_PUBLIC_SITE_URL = https://<owner>.github.io`,
-`NEXT_PUBLIC_BASE_PATH = /<repo>`), so nothing is hardcoded.
+The workflow adapts automatically: because `public/CNAME` exists, it builds for
+`https://gotpilk.com` at the root. Delete `public/CNAME` and it falls back to a
+project page at `https://<owner>.github.io/<repo>/`. Nothing is hardcoded in the
+source — the domain lives only in `public/CNAME`.
 
-**Custom domain:** add your domain under Settings → Pages, put a `CNAME` file in
-`public/`, and in the workflow set `NEXT_PUBLIC_SITE_URL` to your domain and
-`NEXT_PUBLIC_BASE_PATH` to `""` (empty).
+> **Keep `public/CNAME`.** It's what makes the custom domain survive each
+> deploy; without it in the build output, GitHub Pages can drop the domain.
 
 **Build locally** (output lands in `out/`):
 
@@ -186,10 +189,9 @@ npm run build
 npx serve out            # or any static file server
 ```
 
-> Local `npm run dev` and `npm run build` serve under the base path
-> (`/pilk-site`) by default, matching production. Visit
-> `http://localhost:3000/pilk-site` in dev. To develop at the root instead, set
-> `NEXT_PUBLIC_BASE_PATH=""` in `.env.local`.
+> By default (no base path) `npm run dev` serves at `http://localhost:3000`,
+> matching the production root. To emulate a project-page path locally, set
+> `NEXT_PUBLIC_BASE_PATH="/pilk-site"` in `.env.local`.
 
 > **Security headers** (HSTS, `X-Frame-Options`, etc.) can't be set by a static
 > host like GitHub Pages. If you move to a host that supports headers, add them

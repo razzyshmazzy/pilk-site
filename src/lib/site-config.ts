@@ -17,18 +17,17 @@ const origin = (
   process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
 ).replace(/\/$/, "");
 
-// Base path the site is served under. On a GitHub project page this is
-// "/<repo>"; empty for a custom domain / user page. Kept in sync with
+// Base path the site is served under. Empty for the custom domain (gotpilk.com)
+// or a user page; "/<repo>" for a GitHub project page. Kept in sync with
 // next.config.mjs via the same env var.
-const basePath = (process.env.NEXT_PUBLIC_BASE_PATH ?? "/pilk-site").replace(/\/$/, "");
+const basePath = (process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/$/, "");
 
 // Full public URL of the site's home page (origin + base path).
 const siteUrl = `${origin}${basePath}`;
 
-// Brand domain used for contact emails. This is intentionally independent of
-// where the site is hosted (e.g. a github.io URL shouldn't become an email
-// domain). Update to the real domain before launch — see README.
-const domain = process.env.NEXT_PUBLIC_BRAND_DOMAIN || "pilk.com";
+// Brand domain used for contact emails. Intentionally independent of where the
+// site is hosted. Defaults to the production domain, gotpilk.com.
+const domain = process.env.NEXT_PUBLIC_BRAND_DOMAIN || "gotpilk.com";
 
 export const siteConfig = {
   /** Deployment origin (no path), used as metadataBase. */
