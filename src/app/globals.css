@@ -1,0 +1,118 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-cream text-ink antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Consistent, highly visible focus ring for keyboard users. */
+  :focus-visible {
+    @apply outline-none ring-2 ring-pilk-600 ring-offset-2 ring-offset-cream;
+  }
+
+  /* Give anchored sections breathing room below the sticky header. */
+  :target {
+    scroll-margin-top: 6rem;
+  }
+
+  ::selection {
+    background-color: rgba(18, 178, 122, 0.22);
+  }
+}
+
+@layer components {
+  /* Constrains readable content width and centers it. */
+  .container-page {
+    @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3
+      text-base font-semibold transition-all duration-200
+      focus-visible:ring-2 focus-visible:ring-offset-2;
+  }
+
+  .btn-primary {
+    @apply btn bg-pilk-600 text-white shadow-soft
+      hover:bg-pilk-700 hover:shadow-lift active:translate-y-px
+      focus-visible:ring-pilk-700 focus-visible:ring-offset-cream;
+  }
+
+  .btn-secondary {
+    @apply btn border border-ink/15 bg-cream-50 text-ink
+      hover:border-ink/30 hover:bg-white active:translate-y-px
+      focus-visible:ring-ink focus-visible:ring-offset-cream;
+  }
+
+  .btn-ghost {
+    @apply btn text-ink hover:bg-ink/5 active:translate-y-px;
+  }
+
+  /* Small uppercase label used above section headings. */
+  .eyebrow {
+    @apply text-sm font-semibold uppercase tracking-[0.14em] text-pilk-700;
+  }
+
+  /* Readable typography for long-form legal documents. */
+  .legal-prose {
+    @apply text-[16.5px] leading-relaxed text-ink-700;
+  }
+  .legal-prose h2 {
+    @apply mt-12 scroll-mt-24 font-display text-2xl font-bold text-ink;
+  }
+  .legal-prose h3 {
+    @apply mt-8 font-display text-lg font-bold text-ink;
+  }
+  .legal-prose p {
+    @apply mt-4;
+  }
+  .legal-prose ul {
+    @apply mt-4 list-disc space-y-2 pl-6 marker:text-pilk-600;
+  }
+  .legal-prose li {
+    @apply pl-1;
+  }
+  .legal-prose a {
+    @apply font-medium text-pilk-700 underline underline-offset-2 hover:text-pilk-800;
+  }
+  .legal-prose strong {
+    @apply font-semibold text-ink;
+  }
+  .legal-prose h2 + p {
+    @apply mt-3;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+}
+
+/* Honor user preference for reduced motion across all animation. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
