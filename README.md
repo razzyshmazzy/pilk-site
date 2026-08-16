@@ -16,10 +16,16 @@ partnerships, or metrics that don't exist yet.
 - **Next.js 15** (App Router) + **React 19**
 - **TypeScript** (strict)
 - **Tailwind CSS 3**
+- **Static export** (`output: "export"`) — deploys to **GitHub Pages** (or any
+  static host) with no server required.
 - Server Components by default; only the mobile menu, waitlist form, and cookie
   notice ship client-side JavaScript.
-- Favicon and social/Open Graph image are **generated at build time** (`next/og`)
-  — no binary assets to maintain.
+- Favicon (`public/icon.png`) and social card (`public/og.png`) were generated
+  with `next/og` and are served as static assets.
+
+> **Note:** Because the site is a static export, there is no server at runtime.
+> The waitlist form posts to an external service (Formspree) — see
+> [Waitlist](#waitlist) below.
 
 ---
 
@@ -45,60 +51,54 @@ npm run dev                  # http://localhost:3000
 
 ## Environment variables
 
-All are optional for local development. Copy `.env.example` to `.env.local`.
+All are optional for local development. Copy `.env.example` to `.env.local`. In
+CI these are set by the deploy workflow and repo variables (see [Deployment](#deployment)).
 
-| Variable                      | Required | Purpose                                                                 |
-| ----------------------------- | -------- | ----------------------------------------------------------------------- |
-| `NEXT_PUBLIC_SITE_URL`        | Prod     | Canonical URL for metadata, sitemap, Open Graph. e.g. `https://pilk.com`|
-| `DATABASE_URL`                | No       | Postgres connection string for waitlist storage. If empty, a local JSON file is used. |
-| `NEXT_PUBLIC_ANALYTICS_DOMAIN`| No       | Reserved for a privacy-conscious analytics provider (not wired by default). |
-| `NEXT_PUBLIC_ANALYTICS_SRC`   | No       | Reserved for an analytics script src (not wired by default).            |
+| Variable                   | Required | Purpose                                                                                  |
+| -------------------------- | -------- | ---------------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SITE_URL`     | Prod     | Deployment **origin** (no path), e.g. `https://you.github.io`. Used for absolute URLs.    |
+| `NEXT_PUBLIC_BASE_PATH`    | Prod     | Base path the site is served under, e.g. `/pilk-site`. Empty (`""`) for a custom domain.  |
+| `NEXT_PUBLIC_FORMSPREE_ID` | No       | Formspree form id to enable real waitlist submissions. Blank → email fallback.            |
+| `NEXT_PUBLIC_BRAND_DOMAIN` | No       | Brand domain for contact emails (e.g. `pilk.com`). Independent of the hosting URL.        |
+| `NEXT_PUBLIC_ANALYTICS_*`  | No       | Reserved for a privacy-conscious analytics provider (not wired by default).              |
+
+`NEXT_PUBLIC_BASE_PATH` must match `basePath` in `next.config.mjs` — both read
+the same variable, defaulting to `/pilk-site`.
 
 **Never commit real secrets.** `.env` and `.env*.local` are gitignored.
 
 ---
 
-## Waitlist & database
+## Waitlist
 
-The waitlist is a real, functional form backed by a small storage abstraction
-(`src/lib/waitlist.ts`). It selects an adapter automatically:
+Static hosting has no server, so the waitlist form (`src/components/WaitlistForm.tsx`)
+submits to an external form service rather than an internal API route.
 
-- **No `DATABASE_URL`** → **file store** (development fallback). Writes to
-  `.data/waitlist.json` (gitignored). Zero setup — great for local work.
-- **`DATABASE_URL` set** → **Postgres store**. Works with Supabase, Neon, RDS,
-  etc. Requires the optional `pg` package:
+**Enable real submissions (Formspree):**
 
-  ```bash
-  npm install pg
-  ```
+1. Create a free form at [formspree.io](https://formspree.io).
+2. Take the form id — the part after `/f/` in your endpoint
+   (`https://formspree.io/f/**xxxxxxx**`).
+3. Set it as a repo **variable** named `NEXT_PUBLIC_FORMSPREE_ID`
+   (**Settings → Secrets and variables → Actions → Variables**), or in
+   `.env.local` for local testing.
 
-The Postgres adapter creates its table on first use. Schema:
+Signups then arrive in your Formspree inbox (email, first name, organization,
+use case, and any referral code).
 
-```sql
-CREATE TABLE IF NOT EXISTS waitlist_signups (
-  id            BIGSERIAL PRIMARY KEY,
-  email         TEXT NOT NULL UNIQUE,
-  first_name    TEXT,
-  organization  TEXT,
-  use_case      TEXT,
-  referral_code TEXT,
-  created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-```
+**If no Formspree id is set**, the form gracefully falls back to opening a
+pre-filled email to your support address — so it is never broken, just manual.
 
-**Submission handling** (`src/app/api/waitlist/route.ts`):
+What still runs entirely in the browser:
 
-- Server-side validation and email normalization (lowercased, trimmed).
-- Duplicate prevention by email (case-insensitive).
-- Spam defenses: hidden **honeypot** field, minimum fill-time check, and a
-  best-effort per-IP **rate limit** (in-memory; back it with Redis/Upstash for
-  multi-instance production).
-- **Referral readiness**: a `?ref=CODE` query parameter is captured and stored as
-  `referralCode` for future referral attribution.
-- Safe errors: never returns stack traces or internal detail to the client.
+- **Client-side validation** and email formatting before submit.
+- **Honeypot** field (`_gotcha`, which Formspree also respects) to deter bots.
+- **Referral readiness**: a `?ref=CODE` query parameter is captured and sent as
+  `referralCode` for future attribution.
 
-To add another backend (e.g. an HTTP form service), implement the
-`WaitlistStore` interface and wire it into `getWaitlistStore()`.
+> Duplicate prevention and server-side rate limiting are not possible on a pure
+> static host. If you later move to a host with serverless functions (Vercel,
+> Cloudflare, Netlify), you can reintroduce a real API route with dedupe.
 
 ---
 
@@ -115,29 +115,28 @@ Fathom), keep the integration isolated, wire consent into
 ## Project structure
 
 ```
+.github/workflows/
+  deploy.yml              # Build static export + deploy to GitHub Pages
+public/
+  icon.png                # Favicon (static)
+  og.png                  # Social / Open Graph card (static)
+  .nojekyll               # Tell GitHub Pages not to run Jekyll
 src/
   app/
     layout.tsx            # Root layout, fonts, metadata, nav/footer/notice
     page.tsx              # Homepage (Hero, HowItWorks, WhyPilk, Waitlist, FAQ)
     about/                # /about
     contact/              # /contact
-    privacy/              # /privacy
-    terms/                # /terms
-    cookies/              # /cookies
-    api/waitlist/route.ts # Waitlist POST endpoint
+    privacy/ terms/ cookies/   # Legal pages
     error.tsx             # Route error boundary (friendly, no stack leaks)
     not-found.tsx         # 404
-    icon.tsx              # Favicon (generated)
-    opengraph-image.tsx   # Social card (generated)
-    sitemap.ts            # /sitemap.xml
-    robots.ts             # /robots.txt
+    sitemap.ts            # /sitemap.xml   (force-static)
+    robots.ts             # /robots.txt    (force-static)
     globals.css           # Tailwind layers + base/component styles
   components/             # Navbar, Hero, PhoneMockup, WaitlistForm, Footer, ...
   lib/
     site-config.ts        # Central company/site configuration (edit this first)
     validation.ts         # Email/field validation + normalization
-    waitlist.ts           # Storage abstraction (file + Postgres adapters)
-    rate-limit.ts         # In-memory rate limiter
     nav.ts                # Navigation link definitions
     faq.ts                # FAQ content (also feeds FAQ structured data)
 ```
@@ -158,23 +157,43 @@ src/
 
 ## Deployment
 
-Recommended: **Vercel** (first-class Next.js support).
+The site deploys to **GitHub Pages** via GitHub Actions
+(`.github/workflows/deploy.yml`) on every push to `main`.
 
-1. Push this repo to GitHub/GitLab and import it into Vercel.
-2. Set environment variables in the Vercel project settings:
-   - `NEXT_PUBLIC_SITE_URL` = your production URL (e.g. `https://pilk.com`)
-   - `DATABASE_URL` (if using Postgres) — and add `pg` to dependencies.
-3. Deploy. Build command `next build`, output is handled automatically.
+**One-time setup:**
 
-Any Node host works too:
+1. In the repo: **Settings → Pages → Build and deployment → Source = GitHub
+   Actions**.
+2. (Optional but recommended) Add a repo **variable**
+   `NEXT_PUBLIC_FORMSPREE_ID` (**Settings → Secrets and variables → Actions →
+   Variables**) so the waitlist form submits real signups. See
+   [Waitlist](#waitlist).
+3. Push to `main`. The workflow builds the static export and publishes it. The
+   site goes live at `https://<your-username>.github.io/<repo>/`.
+
+The workflow derives the URL automatically from the repo
+(`NEXT_PUBLIC_SITE_URL = https://<owner>.github.io`,
+`NEXT_PUBLIC_BASE_PATH = /<repo>`), so nothing is hardcoded.
+
+**Custom domain:** add your domain under Settings → Pages, put a `CNAME` file in
+`public/`, and in the workflow set `NEXT_PUBLIC_SITE_URL` to your domain and
+`NEXT_PUBLIC_BASE_PATH` to `""` (empty).
+
+**Build locally** (output lands in `out/`):
 
 ```bash
 npm run build
-npm run start   # serves the production build
+npx serve out            # or any static file server
 ```
 
-Security headers (HSTS, `X-Content-Type-Options`, `X-Frame-Options`,
-`Referrer-Policy`, `Permissions-Policy`) are set in `next.config.mjs`.
+> Local `npm run dev` and `npm run build` serve under the base path
+> (`/pilk-site`) by default, matching production. Visit
+> `http://localhost:3000/pilk-site` in dev. To develop at the root instead, set
+> `NEXT_PUBLIC_BASE_PATH=""` in `.env.local`.
+
+> **Security headers** (HSTS, `X-Frame-Options`, etc.) can't be set by a static
+> host like GitHub Pages. If you move to a host that supports headers, add them
+> back in `next.config.mjs` via `headers()`.
 
 ---
 
@@ -185,17 +204,16 @@ code are wrapped in brackets like `[PILK LEGAL ENTITY NAME]`.
 
 - [ ] Insert Pilk legal entity name (`src/lib/site-config.ts` → `legalName`)
 - [ ] Insert official business address if legally required (`site-config.ts` → `businessAddress`)
-- [ ] Set official support/privacy contact email (`site-config.ts` — currently derived as `hello@`/`privacy@` your domain)
-- [ ] Set the production domain (`NEXT_PUBLIC_SITE_URL`)
+- [ ] Set official support/privacy contact email (`site-config.ts` — currently `hello@`/`privacy@` the brand domain; set `NEXT_PUBLIC_BRAND_DOMAIN`)
 - [ ] Set governing law (`site-config.ts` → `governingLaw`)
 - [ ] Decide arbitration / dispute-resolution terms (`src/app/terms/page.tsx` → section 18)
 - [ ] Have the Privacy Policy reviewed by counsel
 - [ ] Have the Terms of Service reviewed by counsel
 - [ ] Confirm actual payment providers before describing them
 - [ ] Confirm analytics/cookie behavior matches the Cookie Policy
-- [ ] Configure a production database (`DATABASE_URL` + `npm install pg`)
-- [ ] Configure email infrastructure for waitlist notifications
-- [ ] Test waitlist submissions end-to-end in production
+- [ ] Enable GitHub Pages (Settings → Pages → Source = GitHub Actions)
+- [ ] Set `NEXT_PUBLIC_FORMSPREE_ID` repo variable so waitlist signups are captured
+- [ ] Test waitlist submissions end-to-end (check the Formspree inbox)
 - [ ] Test mobile layouts on real devices
 - [ ] Test accessibility (keyboard, screen reader, contrast)
 - [ ] Verify the production build (`npm run build`)

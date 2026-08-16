@@ -4,7 +4,7 @@ import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { CookieNotice } from "@/components/CookieNotice";
-import { siteConfig } from "@/lib/site-config";
+import { siteConfig, canonical } from "@/lib/site-config";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -25,7 +25,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteConfig.url),
+  metadataBase: new URL(siteConfig.origin),
   title: {
     default: `${siteConfig.name} | Split the check. Not the friendship.`,
     template: `%s | ${siteConfig.name}`,
@@ -43,7 +43,12 @@ export const metadata: Metadata = {
   authors: [{ name: siteConfig.name }],
   creator: siteConfig.name,
   alternates: {
-    canonical: "/",
+    canonical: canonical("/"),
+  },
+  icons: {
+    icon: [{ url: `${siteConfig.basePath}/icon.png`, type: "image/png", sizes: "32x32" }],
+    shortcut: [`${siteConfig.basePath}/icon.png`],
+    apple: [`${siteConfig.basePath}/icon.png`],
   },
   openGraph: {
     type: "website",
@@ -52,11 +57,20 @@ export const metadata: Metadata = {
     description: siteConfig.description,
     url: siteConfig.url,
     locale: "en_US",
+    images: [
+      {
+        url: `${siteConfig.url}/og.png`,
+        width: 1200,
+        height: 630,
+        alt: `${siteConfig.name} — Split the check. Not the friendship.`,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: `${siteConfig.name} | Split the check. Not the friendship.`,
     description: siteConfig.description,
+    images: [`${siteConfig.url}/og.png`],
   },
   robots: {
     index: true,

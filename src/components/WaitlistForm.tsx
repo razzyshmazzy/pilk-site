@@ -1,30 +1,35 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { USE_CASES, isValidEmail } from "@/lib/validation";
+import { siteConfig } from "@/lib/site-config";
 import { CheckCircleIcon, SpinnerIcon, ArrowRightIcon } from "./icons";
 
-type Status = "idle" | "submitting" | "success" | "duplicate" | "error";
+type Status = "idle" | "submitting" | "success" | "error";
+
+// On a static host there's no server to receive submissions, so the form posts
+// to an external form endpoint. Configure a Formspree form id via the
+// NEXT_PUBLIC_FORMSPREE_ID env var (baked in at build time). If it's not set,
+// the form gracefully falls back to a pre-filled email so it's never broken.
+const FORMSPREE_ID = process.env.NEXT_PUBLIC_FORMSPREE_ID || "";
+const endpoint = FORMSPREE_ID ? `https://formspree.io/f/${FORMSPREE_ID}` : "";
 
 export function WaitlistForm() {
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [organization, setOrganization] = useState("");
   const [useCase, setUseCase] = useState("");
-  const [honeypot, setHoneypot] = useState(""); // must stay empty
+  const [gotcha, setGotcha] = useState(""); // honeypot; must stay empty
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
   const [touched, setTouched] = useState(false);
 
-  // Captured once on mount: form render time (bot heuristic) + ?ref= code.
-  const renderedAt = useRef<number>(Date.now());
+  // Captured on mount: ?ref= referral code for future attribution.
   const [referralCode, setReferralCode] = useState("");
 
   useEffect(() => {
-    renderedAt.current = Date.now();
     try {
-      const params = new URLSearchParams(window.location.search);
-      const ref = params.get("ref");
+      const ref = new URLSearchParams(window.location.search).get("ref");
       if (ref) setReferralCode(ref);
     } catch {
       /* no-op */
@@ -33,6 +38,21 @@ export function WaitlistForm() {
 
   const emailValid = useMemo(() => isValidEmail(email), [email]);
   const showEmailError = touched && email.length > 0 && !emailValid;
+
+  function mailtoFallback() {
+    const subject = encodeURIComponent("Pilk waitlist signup");
+    const lines = [
+      `Email: ${email}`,
+      firstName && `First name: ${firstName}`,
+      organization && `School / company: ${organization}`,
+      useCase && `Would use Pilk for: ${useCase}`,
+      referralCode && `Referral: ${referralCode}`,
+    ].filter(Boolean);
+    const body = encodeURIComponent(
+      `I'd like to join the Pilk waitlist.\n\n${lines.join("\n")}`,
+    );
+    window.location.href = `mailto:${siteConfig.supportEmail}?subject=${subject}&body=${body}`;
+  }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -44,41 +64,60 @@ export function WaitlistForm() {
       return;
     }
 
+    // Honeypot tripped — silently treat as success without sending.
+    if (gotcha.trim() !== "") {
+      setStatus("success");
+      return;
+    }
+
+    // No endpoint configured: hand off to the user's email client.
+    if (!endpoint) {
+      mailtoFallback();
+      setStatus("success");
+      return;
+    }
+
     setStatus("submitting");
     try {
-      const res = await fetch("/api/waitlist", {
+      const res = await fetch(endpoint, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
         body: JSON.stringify({
           email,
           firstName,
           organization,
           useCase,
           referralCode,
-          company_website: honeypot,
-          renderedAt: renderedAt.current,
+          _gotcha: gotcha,
+          _subject: "New Pilk waitlist signup",
         }),
       });
-      const data = (await res.json().catch(() => ({}))) as {
-        ok?: boolean;
-        status?: string;
-        error?: string;
-      };
 
-      if (!res.ok || !data.ok) {
-        setStatus("error");
-        setError(data.error || "Something went wrong. Please try again.");
+      if (res.ok) {
+        setStatus("success");
         return;
       }
 
-      setStatus(data.status === "duplicate" ? "duplicate" : "success");
+      const data = (await res.json().catch(() => ({}))) as {
+        errors?: Array<{ message?: string }>;
+      };
+      setStatus("error");
+      setError(
+        data.errors?.[0]?.message ||
+          "Something went wrong. Please try again in a moment.",
+      );
     } catch {
       setStatus("error");
-      setError("We couldn't reach the server. Please check your connection and try again.");
+      setError(
+        "We couldn't reach the signup service. Please check your connection and try again.",
+      );
     }
   }
 
-  if (status === "success" || status === "duplicate") {
+  if (status === "success") {
     return (
       <div
         className="rounded-3xl border border-pilk-200 bg-pilk-50 p-8 text-center animate-pop-in sm:p-10"
@@ -89,12 +128,11 @@ export function WaitlistForm() {
           <CheckCircleIcon className="h-7 w-7" />
         </span>
         <h3 className="mt-5 font-display text-2xl font-extrabold text-ink">
-          {status === "duplicate" ? "You're already on the list." : "You're on the list."}
+          You&apos;re on the list.
         </h3>
         <p className="mx-auto mt-2 max-w-md text-ink-600">
-          {status === "duplicate"
-            ? "Looks like this email already joined — no need to sign up twice. We'll email you when Pilk is ready for early access."
-            : "Thanks for joining. We'll email you when Pilk is ready for early access — no spam, just the important stuff."}
+          Thanks for joining. We&apos;ll email you when Pilk is ready for early
+          access — no spam, just the important stuff.
         </p>
       </div>
     );
@@ -108,15 +146,15 @@ export function WaitlistForm() {
     >
       {/* Honeypot: hidden from humans, tempting to bots. Not focusable, not read. */}
       <div className="absolute left-[-9999px] top-auto h-0 w-0 overflow-hidden" aria-hidden>
-        <label htmlFor="company_website">Company website</label>
+        <label htmlFor="_gotcha">Company website</label>
         <input
-          id="company_website"
-          name="company_website"
+          id="_gotcha"
+          name="_gotcha"
           type="text"
           tabIndex={-1}
           autoComplete="off"
-          value={honeypot}
-          onChange={(e) => setHoneypot(e.target.value)}
+          value={gotcha}
+          onChange={(e) => setGotcha(e.target.value)}
         />
       </div>
 

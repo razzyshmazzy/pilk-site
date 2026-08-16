@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { siteConfig } from "@/lib/site-config";
+import { siteConfig, canonical } from "@/lib/site-config";
 import { MailIcon, ArrowRightIcon } from "@/components/icons";
 
 export const metadata: Metadata = {
   title: "Contact",
   description: `Get in touch with the ${siteConfig.name} team.`,
-  alternates: { canonical: "/contact" },
+  alternates: { canonical: canonical("/contact") },
 };
 
 export default function ContactPage() {

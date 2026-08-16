@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRightIcon } from "@/components/icons";
+import { canonical } from "@/lib/site-config";
 
 export const metadata: Metadata = {
   title: "About",
   description:
     "Paying for dinner with friends is bizarrely complicated. Pilk is building a payment experience designed around the fact that purchases are often made by groups.",
-  alternates: { canonical: "/about" },
+  alternates: { canonical: canonical("/about") },
 };
 
 export default function AboutPage() {

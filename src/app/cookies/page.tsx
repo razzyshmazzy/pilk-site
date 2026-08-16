@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { LegalLayout } from "@/components/LegalLayout";
-import { siteConfig } from "@/lib/site-config";
+import { siteConfig, canonical } from "@/lib/site-config";
 
 export const metadata: Metadata = {
   title: "Cookie Policy",
   description: `How ${siteConfig.name} uses cookies and similar technologies.`,
-  alternates: { canonical: "/cookies" },
+  alternates: { canonical: canonical("/cookies") },
 };
 
 export default function CookiesPage() {

@@ -1,6 +1,9 @@
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/lib/site-config";
 
+// Prerender to a static sitemap.xml under `output: export`.
+export const dynamic = "force-static";
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = siteConfig.url;
   const lastModified = new Date(siteConfig.legalEffectiveDate);

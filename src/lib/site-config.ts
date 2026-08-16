@@ -11,22 +11,33 @@
  * They are tracked in the README "Before Public Launch" checklist.
  */
 
-const siteUrl = (
+// Deployment origin (scheme + host, no path). On GitHub Pages this is
+// https://<user>.github.io; with a custom domain it's that domain.
+const origin = (
   process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
 ).replace(/\/$/, "");
 
-// The public-facing domain, derived from the site URL, used for `hello@domain`.
-function domainFromUrl(url: string): string {
-  try {
-    return new URL(url).hostname.replace(/^www\./, "");
-  } catch {
-    return "pilk.com";
-  }
-}
+// Base path the site is served under. On a GitHub project page this is
+// "/<repo>"; empty for a custom domain / user page. Kept in sync with
+// next.config.mjs via the same env var.
+const basePath = (process.env.NEXT_PUBLIC_BASE_PATH ?? "/pilk-site").replace(/\/$/, "");
 
-const domain = domainFromUrl(siteUrl === "http://localhost:3000" ? "https://pilk.com" : siteUrl);
+// Full public URL of the site's home page (origin + base path).
+const siteUrl = `${origin}${basePath}`;
+
+// Brand domain used for contact emails. This is intentionally independent of
+// where the site is hosted (e.g. a github.io URL shouldn't become an email
+// domain). Update to the real domain before launch — see README.
+const domain = process.env.NEXT_PUBLIC_BRAND_DOMAIN || "pilk.com";
 
 export const siteConfig = {
+  /** Deployment origin (no path), used as metadataBase. */
+  origin,
+
+  /** Base path the site is served under (e.g. "/pilk-site", or "" for a domain). */
+  basePath,
+
+
   /** Product / brand display name. */
   name: "Pilk",
 
@@ -89,6 +100,15 @@ export const siteConfig = {
 } as const;
 
 export type SiteConfig = typeof siteConfig;
+
+/**
+ * Builds a root-relative canonical path including the base path. Resolved by
+ * Next against `metadataBase` (the origin) to a full URL. Pass "/" for home.
+ */
+export function canonical(path = "/"): string {
+  const suffix = path === "/" ? "/" : path;
+  return `${siteConfig.basePath}${suffix}` || "/";
+}
 
 /** Formats an ISO date (YYYY-MM-DD) as e.g. "August 15, 2026". */
 export function formatLegalDate(iso: string): string {

@@ -1,35 +1,21 @@
 /** @type {import('next').NextConfig} */
 
-// Security headers applied to every route. These are intentionally conservative
-// so they don't interfere with the marketing site while still hardening it.
-const securityHeaders = [
-  { key: "X-Content-Type-Options", value: "nosniff" },
-  { key: "X-Frame-Options", value: "DENY" },
-  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-  {
-    key: "Permissions-Policy",
-    value: "camera=(), microphone=(), geolocation=(), interest-cohort=()",
-  },
-  {
-    key: "Strict-Transport-Security",
-    value: "max-age=63072000; includeSubDomains; preload",
-  },
-];
+// GitHub Pages serves static files only, so the site is built as a static
+// export. When hosted at https://<user>.github.io/<repo>, all routes live under
+// a "/<repo>" base path. Both are configurable via env so the same code can
+// deploy to a custom domain (set NEXT_PUBLIC_BASE_PATH="") without edits.
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "/pilk-site";
 
 const nextConfig = {
+  output: "export",
   reactStrictMode: true,
   poweredByHeader: false,
-  // `pg` is an optional dependency used only when DATABASE_URL is configured.
-  // Externalizing it keeps it out of the bundle so the build never requires it
-  // to be installed; it's require()d at runtime only when actually used.
-  serverExternalPackages: ["pg"],
-  async headers() {
-    return [
-      {
-        source: "/:path*",
-        headers: securityHeaders,
-      },
-    ];
+  basePath: basePath || undefined,
+  // Emit /route/index.html so paths resolve cleanly on static hosts.
+  trailingSlash: true,
+  images: {
+    // The static export target can't run the Next image optimizer.
+    unoptimized: true,
   },
 };
 

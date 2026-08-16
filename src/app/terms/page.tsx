@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { LegalLayout } from "@/components/LegalLayout";
-import { siteConfig } from "@/lib/site-config";
+import { siteConfig, canonical } from "@/lib/site-config";
 
 export const metadata: Metadata = {
   title: "Terms of Service",
   description: `The terms that govern your use of the ${siteConfig.name} website and services.`,
-  alternates: { canonical: "/terms" },
+  alternates: { canonical: canonical("/terms") },
 };
 
 export default function TermsPage() {
