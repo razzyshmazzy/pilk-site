@@ -37,3 +37,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# ops dashboard secrets (admin.php reads this; never commit)
+config.php

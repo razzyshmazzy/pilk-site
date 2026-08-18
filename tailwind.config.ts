@@ -28,22 +28,21 @@ const config: Config = {
           500: "#948C7C",
           400: "#6F6858",
         },
-        // Pilk's signature colour — a warm, vivid orange.
+        // Pilk's signature colour — the app's violet, matching the product.
         pilk: {
-          50: "#FFF3E9",
-          100: "#FFE2CC",
-          200: "#FFC59B",
-          300: "#FFA366",
-          400: "#FF8636",
-          500: "#F76B15",
-          600: "#E35D0C",
-          700: "#BC4A0B",
-          800: "#953C0F",
-          900: "#7A3310",
+          50: "#F3EEFE",
+          100: "#E4D9FD",
+          200: "#CDB8FA",
+          300: "#B195F8",
+          400: "#9A75F7",
+          500: "#8B5CF6",
+          600: "#7C3AED",
+          700: "#6D28D9",
+          800: "#5B21B6",
+          900: "#4C1D95",
         },
-        // Teal — orange's complement. Used as the cool secondary accent for
-        // "done / settled / positive" states, balancing the warm orange
-        // (60-30-10: dark neutral / orange / teal).
+        // Teal — the money colour (secured / settled / positive states),
+        // mirroring the app (60-30-10: dark neutral / violet / teal).
         teal: {
           200: "#99F6E4",
           300: "#5EEAD4",
