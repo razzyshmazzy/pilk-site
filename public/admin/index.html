@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Pilk Ops</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#0A090E; --card:#16131D; --raised:#201B2B; --border:#2A2536;
+          --text:#F4F2F8; --text2:#A9A3B8; --text3:#8A8399;
+          --primary:#8B5CF6; --teal:#14B8A6; --red:#EF4444; }
+  * { box-sizing:border-box; margin:0; }
+  body { background:var(--bg); color:var(--text); font-family:'Sora',sans-serif; min-height:100vh; }
+  a { color:var(--primary); text-decoration:none; cursor:pointer; }
+  .wrap { max-width:1080px; margin:0 auto; padding:24px 16px 64px; }
+  .topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+  h1 { font-size:28px; } h2 { font-size:20px; margin-bottom:12px; }
+  .mark { width:30px; height:30px; border-radius:50%;
+          background:conic-gradient(var(--primary) 0 58deg, var(--bg) 58deg 62deg, var(--primary) 62deg 118deg, var(--bg) 118deg 122deg, var(--primary) 122deg 178deg, var(--bg) 178deg 182deg, var(--primary) 182deg 238deg, var(--bg) 238deg 242deg, var(--primary) 242deg 298deg, var(--bg) 298deg 302deg, var(--primary) 302deg 358deg, var(--bg) 358deg 360deg); }
+  .tabs { display:flex; gap:4px; border-bottom:1px solid var(--border); margin-bottom:24px; }
+  .tabs a { padding:10px 16px; color:var(--text2); border-bottom:2px solid transparent; }
+  .tabs a.active { color:var(--text); border-bottom-color:var(--primary); }
+  .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; margin-bottom:24px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:20px; }
+  .kpi { font-size:32px; font-weight:700; font-variant-numeric:tabular-nums; }
+  .kpi.teal { color:var(--teal); }
+  .label { font-size:13px; color:var(--text3); margin-bottom:6px; }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th { text-align:left; color:var(--text3); font-weight:400; font-size:12px; padding:8px 10px; border-bottom:1px solid var(--border); }
+  td { padding:12px 10px; border-bottom:1px solid var(--border); font-variant-numeric:tabular-nums; }
+  tr:last-child td { border-bottom:none; }
+  .pill { display:inline-block; padding:2px 10px; border-radius:999px; font-size:12px; background:var(--bg); border:1px dotted var(--text3); color:var(--text2); }
+  .pill.upscale { border-color:var(--primary); color:var(--primary); }
+  .pill.fineDining { border-color:var(--teal); color:var(--teal); }
+  .filters { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+  .filters a { padding:6px 14px; border:1px solid var(--border); border-radius:999px; color:var(--text2); font-size:13px; }
+  .filters a.on { border-color:var(--primary); color:var(--text); }
+  input, textarea, select, button { font-family:inherit; font-size:15px; color:var(--text);
+    background:var(--raised); border:1px solid var(--border); border-radius:12px; padding:12px 14px; }
+  button { background:var(--primary); border:none; color:#fff; font-weight:600; cursor:pointer; }
+  button:hover { opacity:.9; }
+  .login { max-width:360px; margin:15vh auto 0; display:flex; flex-direction:column; gap:12px; padding:0 16px; }
+  .err { color:var(--red); font-size:14px; min-height:18px; }
+  .notice { background:var(--raised); border:1px solid var(--border); border-radius:12px; padding:12px 16px; margin-bottom:16px; font-size:14px; }
+  .ticket { margin-bottom:16px; }
+  .ticket .meta { font-size:12px; color:var(--text3); margin-bottom:8px; }
+  .ticket p { color:var(--text2); font-size:14px; margin:8px 0; }
+  .ticket form { display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; }
+  .ticket textarea { flex:1; min-width:240px; min-height:44px; }
+  .reply { border-left:3px solid var(--teal); padding-left:12px; }
+  .muted { color:var(--text3); font-size:14px; }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<form id="login" class="login" hidden>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><div class="mark"></div><h1>Pilk Ops</h1></div>
+  <div class="err" id="login-err"></div>
+  <input id="user" placeholder="Username" autocomplete="username" autofocus>
+  <input id="pass" type="password" placeholder="Password" autocomplete="current-password">
+  <button type="submit">Sign in</button>
+</form>
+
+<div id="app" class="wrap" hidden>
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:10px"><div class="mark"></div><h1>Pilk Ops</h1></div>
+    <a id="logout">Sign out</a>
+  </div>
+  <div class="tabs" id="tabs"></div>
+  <div id="notice" class="notice" hidden></div>
+  <div id="content"><p class="muted">Loading…</p></div>
+</div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const sb = createClient('https://icqkfuvxnduaynoftpnh.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImljcWtmdXZ4bmR1YXlub2Z0cG5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjIyMDQsImV4cCI6MjEwMjIzODIwNH0.cV-eAkrHXz_CtqKxQcdP0ZIcnAWiEH39tnQwYe8OEy4');
+const ADMIN_EMAIL = { razzy: 'razzy@pilk.app' };
+
+// ── Fee model: MUST mirror pilk/domain/fees.ts ──────────────────────────────
+const TIERS = { everyday:{m:0.011,cap:1000}, upscale:{m:0.014,cap:2500}, fineDining:{m:0.018,cap:null} };
+const tierOf = (bill, n) => { if (!bill || !n) return 'everyday'; const ph = bill/n; return ph>=7500?'fineDining':ph>=5000?'upscale':'everyday'; };
+const feeCents = (s, t) => { if (s<=0) return 0; const {m,cap}=TIERS[t]; const p = cap==null? s*m : Math.min(s*m,cap); return Math.round((0.029*s+30+p)/0.971); };
+const netCents = (s, t) => { const f=feeCents(s,t); return f - Math.round(0.029*(s+f)) - 30; };
+const money = (c) => '$' + (c/100).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (ch)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+const TIER_LABEL = { everyday:'Everyday', upscale:'Upscale', fineDining:'Fine dining' };
+
+const state = { tab:'overview', range:'today', sort:'recent' };
+const $ = (id) => document.getElementById(id);
+
+async function ensureAuth() {
+  const { data } = await sb.auth.getSession();
+  if (data.session) { $('login').hidden = true; $('app').hidden = false; render(); }
+  else { $('login').hidden = false; $('app').hidden = true; }
+}
+
+$('login').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = ADMIN_EMAIL[$('user').value.trim().toLowerCase()];
+  if (!email) { $('login-err').textContent = 'Wrong username or password.'; return; }
+  const { error } = await sb.auth.signInWithPassword({ email, password: $('pass').value });
+  $('login-err').textContent = error ? 'Wrong username or password.' : '';
+  if (!error) ensureAuth();
+});
+$('logout').addEventListener('click', async () => { await sb.auth.signOut(); ensureAuth(); });
+
+function sinceIso() {
+  if (state.range === 'today') { const d = new Date(); d.setHours(0,0,0,0); return d.toISOString(); }
+  if (state.range === '7d') return new Date(Date.now() - 7*86400e3).toISOString();
+  return null;
+}
+
+async function fetchTxns() {
+  let q = sb.from('transactions').select('*, transaction_shares(*)').order('created_at', { ascending:false }).limit(200);
+  const since = sinceIso();
+  if (since) q = q.gte('created_at', since);
+  const { data, error } = await q;
+  if (error) throw error;
+  for (const t of data) {
+    const tier = tierOf(t.total_cents, t.people_count);
+    t.eco = { tier,
+      fees: t.transaction_shares.reduce((a,s)=>a+feeCents(s.share_cents,tier),0),
+      net:  t.transaction_shares.reduce((a,s)=>a+netCents(s.share_cents,tier),0) };
+  }
+  if (state.sort === 'top') data.sort((a,b)=>b.total_cents-a.total_cents);
+  if (state.sort === 'profit') data.sort((a,b)=>b.eco.net-a.eco.net);
+  return data;
+}
+
+const fmtTime = (iso) => new Date(iso).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+const rangeFilters = (tab) => ['today','7d','all'].map(r=>`<a data-range="${r}" class="${state.range===r?'on':''}">${{today:'Today','7d':'Last 7 days',all:'All time'}[r]}</a>`).join('');
+const pill = (tier) => `<span class="pill ${tier}">${TIER_LABEL[tier]}</span>`;
+
+async function render() {
+  $('tabs').innerHTML = ['overview','transactions','treasury','reviews','tickets']
+    .map(t=>`<a data-tab="${t}" class="${state.tab===t?'active':''}">${t[0].toUpperCase()+t.slice(1)}</a>`).join('');
+  const c = $('content');
+  c.innerHTML = '<p class="muted">Loading…</p>';
+  try {
+    if (state.tab === 'overview') {
+      const txns = await fetchTxns();
+      const total = txns.reduce((a,t)=>a+t.total_cents,0);
+      const net = txns.reduce((a,t)=>a+t.eco.net,0);
+      const fees = txns.reduce((a,t)=>a+t.eco.fees,0);
+      c.innerHTML = `
+        <div class="filters">${rangeFilters()}</div>
+        <div class="cards">
+          <div class="card"><div class="label">Money transacted</div><div class="kpi">${money(total)}</div></div>
+          <div class="card"><div class="label">Pilk profit (net of Stripe)</div><div class="kpi teal">${money(net)}</div></div>
+          <div class="card"><div class="label">Fee revenue</div><div class="kpi">${money(fees)}</div></div>
+          <div class="card"><div class="label">Dinners</div><div class="kpi">${txns.length}</div></div>
+        </div>
+        <div class="card"><h2>Latest dinners</h2><table>
+          <tr><th>Restaurant</th><th>When</th><th>Diners</th><th>Tier</th><th>Total</th><th>Pilk net</th></tr>
+          ${txns.slice(0,8).map(t=>`<tr><td>${esc(t.title)}</td><td>${fmtTime(t.created_at)}</td><td>${t.people_count}</td><td>${pill(t.eco.tier)}</td><td>${money(t.total_cents)}</td><td style="color:var(--teal)">${money(t.eco.net)}</td></tr>`).join('')}
+        </table></div>`;
+    } else if (state.tab === 'transactions') {
+      const txns = await fetchTxns();
+      c.innerHTML = `
+        <div class="filters">${rangeFilters()}<span style="width:16px"></span>
+          ${['recent','top','profit'].map(s=>`<a data-sort="${s}" class="${state.sort===s?'on':''}">${{recent:'Recent',top:'Top amount',profit:'Top profit'}[s]}</a>`).join('')}
+        </div>
+        <div class="card"><table>
+          <tr><th>Restaurant</th><th>Date</th><th>Diners</th><th>Tier</th><th>Total</th><th>Fees charged</th><th>Pilk net</th></tr>
+          ${txns.map(t=>`<tr><td>${esc(t.title)}</td><td>${fmtTime(t.created_at)}</td><td>${t.people_count}</td><td>${pill(t.eco.tier)}</td><td>${money(t.total_cents)}</td><td>${money(t.eco.fees)}</td><td style="color:var(--teal)">${money(t.eco.net)}</td></tr>`).join('')
+          || '<tr><td colspan="7" class="muted">No transactions in this range.</td></tr>'}
+        </table></div>`;
+    } else if (state.tab === 'treasury') {
+      const { data: snap, error } = await sb.rpc('treasury_snapshot');
+      if (error) throw error;
+      const modes = snap.tables_by_mode || {};
+      c.innerHTML = `
+        <div class="cards">
+          <div class="card"><div class="label">Issuing balance (${esc(snap.balance_source)})</div><div class="kpi">${money(snap.issuing_available_cents)}</div></div>
+          <div class="card"><div class="label">Safety reserve</div><div class="kpi">${money(snap.safety_reserve_cents)}</div></div>
+          <div class="card"><div class="label">Reserved for tables</div><div class="kpi">${money(snap.reserved_cents)}</div></div>
+          <div class="card"><div class="label">Usable liquidity</div><div class="kpi teal">${money(snap.usable_cents)}</div></div>
+        </div>
+        <div class="cards">
+          <div class="card"><div class="label">Pilk Pay tables</div><div class="kpi">${modes.PILK_PAY ?? 0}</div></div>
+          <div class="card"><div class="label">Captain Pay tables</div><div class="kpi">${modes.CAPTAIN_PAY ?? 0}</div></div>
+          <div class="card"><div class="label">Unassigned</div><div class="kpi">${modes.UNASSIGNED ?? 0}</div></div>
+          <div class="card"><div class="label">Tip padding</div><div class="kpi">${(snap.auth_padding_bps/100).toFixed(0)}%</div></div>
+        </div>
+        <div class="card" style="margin-bottom:24px">
+          <h2>Active reservations</h2>
+          <table>
+            <tr><th>Table</th><th>Amount</th><th>Status</th><th>Expires</th></tr>
+            ${(snap.active_reservations||[]).map(r=>`<tr><td>${esc(r.table_id.slice(0,8))}</td><td>${money(r.amount_cents)}</td><td><span class="pill">${esc(r.status)}</span></td><td>${fmtTime(r.expires_at)}</td></tr>`).join('')
+             || '<tr><td colspan="4" class="muted">No live reservations.</td></tr>'}
+          </table>
+        </div>
+        <div class="card" style="margin-bottom:24px">
+          <h2>Outstanding Captain reimbursements</h2>
+          <table>
+            <tr><th>Table</th><th>Payout</th><th>Status</th><th>Created</th></tr>
+            ${(snap.outstanding_reimbursements||[]).map(r=>`<tr><td>${esc(r.table_id.slice(0,8))}</td><td>${money(r.payout_cents)}</td><td><span class="pill">${esc(r.status)}</span></td><td>${fmtTime(r.created_at)}</td></tr>`).join('')
+             || '<tr><td colspan="4" class="muted">Nothing owed.</td></tr>'}
+          </table>
+        </div>
+        <div class="card">
+          <h2>Simulation (dev only)</h2>
+          <p class="muted" style="margin-bottom:12px">Deterministic routing tests without touching real Stripe money. Discount: ${snap.captain_fee_discount_pct}% · TTL: ${snap.reservation_ttl_minutes}m · Max table: ${money(snap.max_table_cents)}</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input id="sim-balance" placeholder="Issuing balance in dollars" style="flex:1;min-width:200px">
+            <button id="sim-set">Set balance</button>
+            <button id="sim-sync">Sync from Stripe</button>
+          </div>
+        </div>`;
+      $('sim-set').onclick = async () => {
+        const dollars = parseFloat(document.getElementById('sim-balance').value);
+        if (!isFinite(dollars) || dollars < 0) return;
+        const { error: e2 } = await sb.rpc('dev_set_treasury', { p: { issuing_available_cents: Math.round(dollars*100) } });
+        const n = $('notice'); n.hidden = false;
+        n.textContent = e2 ? 'Failed: ' + e2.message : 'Simulated balance set.';
+        render();
+      };
+      $('sim-sync').onclick = async () => {
+        const { data: r, error: e3 } = await sb.functions.invoke('sync-treasury', { body: {} });
+        const n = $('notice'); n.hidden = false;
+        n.textContent = e3 ? 'Sync failed: ' + e3.message : 'Synced ' + money(r.issuingAvailableCents) + ' from Stripe.';
+        render();
+      };
+    } else if (state.tab === 'reviews') {
+      c.innerHTML = '<div class="card"><h2>User reviews</h2><p class="muted">Coming soon. Reviews will land here once the app ships its post-dinner rating sheet.</p></div>';
+    } else if (state.tab === 'tickets') {
+      const { data: tickets, error } = await sb.from('support_tickets')
+        .select('*, profiles(name)').order('created_at', { ascending:false }).limit(100);
+      if (error) throw error;
+      c.innerHTML = tickets.map(tk=>`
+        <div class="card ticket">
+          <div class="meta">${esc(tk.profiles?.name ?? 'Unknown diner')} · ${fmtTime(tk.created_at)} · <span class="pill">${esc(tk.status)}</span></div>
+          <strong>${esc(tk.subject)}</strong>
+          <p>${esc(tk.message)}</p>
+          ${tk.reply ? `<p class="reply">${esc(tk.reply)}</p>` : ''}
+          ${tk.status === 'open' ? `
+            <form data-ticket="${tk.id}">
+              <textarea name="reply" placeholder="Write a reply"></textarea>
+              <select name="status"><option value="answered">Answer</option><option value="closed">Answer and close</option></select>
+              <button type="submit">Send</button>
+            </form>` : ''}
+        </div>`).join('') || '<div class="card"><p class="muted">No tickets.</p></div>';
+    }
+  } catch (err) {
+    c.innerHTML = `<div class="notice err">Supabase error: ${esc(err.message ?? String(err))}</div>`;
+  }
+}
+
+document.addEventListener('click', (e) => {
+  const t = e.target.closest('a[data-tab], a[data-range], a[data-sort]');
+  if (!t) return;
+  if (t.dataset.tab) state.tab = t.dataset.tab;
+  if (t.dataset.range) state.range = t.dataset.range;
+  if (t.dataset.sort) state.sort = t.dataset.sort;
+  render();
+});
+
+document.addEventListener('submit', async (e) => {
+  const form = e.target.closest('form[data-ticket]');
+  if (!form) return;
+  e.preventDefault();
+  const reply = form.reply.value.trim();
+  if (!reply) return;
+  const { error } = await sb.from('support_tickets')
+    .update({ reply, status: form.status.value, replied_at: new Date().toISOString() })
+    .eq('id', form.dataset.ticket);
+  const n = $('notice');
+  n.hidden = false;
+  n.textContent = error ? 'Reply failed: ' + error.message : 'Reply sent.';
+  render();
+});
+
+ensureAuth();
+</script>
+</body>
+</html>
